@@ -1,10 +1,10 @@
-#Print all paths from a given source to a destination
+#Print all paths from a given source to a destination in a graph/map
 
 from collections import defaultdict
 
 
 # This class represents a directed graph
-# using adjacency list represenation
+# using adjacency list representaion
 class Graph:
 
     def __init__(self, vertices):
