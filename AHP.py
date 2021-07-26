@@ -24,7 +24,7 @@ allPaths = {    'path_1' : { "time" : 2,
                              "distance" : 26},
                 'path_5' : { "time" : 8,
                              "height" : 0.29,
-                             "distance" : 7}
+                             "distance" : 1}
             }
 
 ''' function to generate comparison matrix for each factor
@@ -32,32 +32,110 @@ allPaths = {    'path_1' : { "time" : 2,
     everytime it sorts elements by one of 3 factors
 '''
 # sorted by time from shortest to greatest
-print('Below are the sorted paths from shortest time to greatest: ')
-sortedPathByTime = sorted(allPaths, key=lambda x: (allPaths[x]['time']))
-print(sortedPathByTime)
-print('\n')
+# print('Below are the sorted paths from shortest time to greatest: ')
+# sortedPathByTime = sorted(allPaths, key=lambda x: (allPaths[x]['time']))
+# print(sortedPathByTime)
+# print('\n')
+#
+# # sorted by height from shortest to greatest
+# print('Below are the sorted paths from shortest height to greatest: ')
+# sortedPathByHeight = sorted(allPaths, key=lambda x: (allPaths[x]['height']))
+# print(sortedPathByHeight)
+# print('\n')
+#
+#
+# # sorted by distance from shortest to greatest
+# print('Below are the sorted paths from shortest distance to greatest: ')
+# sortedPathByDistance = sorted(allPaths, key=lambda x: (allPaths[x]['distance']))
+# print(sortedPathByDistance)
+# print('\n')
 
-# sorted by height from shortest to greatest
-print('Below are the sorted paths from shortest height to greatest: ')
-sortedPathByHeight = sorted(allPaths, key=lambda x: (allPaths[x]['height']))
-print(sortedPathByHeight)
-print('\n')
+'''
+    calculate relative strength for each candidate against each criterion
+    for each criterion, add up all paths' values to get the sum which then divides relative strength for one particular path
 
+'''
 
-# sorted by distance from shortest to greatest
-print('Below are the sorted paths from shortest distance to greatest: ')
-sortedPathByDistance = sorted(allPaths, key=lambda x: (allPaths[x]['distance']))
-print(sortedPathByDistance)
+# for time, height, distance
+# get the value of time for each path --> get the sum of them --> divide each path's time by the
+sum_time = 0
+sum_height = 0
+sum_distance = 0
+for key, value in allPaths.items():
+    sum_time += value['time']
+    sum_height += value['height']
+    sum_distance += value['distance']
+
+#check correctness of summation. Succeed
+print('sum of time, height, distance, respectively: ')
+print(sum_time, sum_height, sum_distance)
 print('\n')
 
 '''
-    The next step is to assign Satty value to each path for each factor
-    so for each path, it will be assigned different, if not completely, Satty value three times.
-    The rule goes like this: We want to let trashcans lasting for greatest days to be picked up
-    as soon as possible (prioritized), piling up greatest height inside the bin to be prioritized
-    and routes that require minimum distance should be prioritized.
+    calculate relative strength (the result is rounded for the sake of integer rule of Satty scale)
+    if the result is 0.0, then all the other result is added by 1
+    if the result is greater than 9, then this result is set to 9
+'''
+rs_time = {}
 
-    In short, longer the trash remains, higher the trash is, and shorter the distance, 
-    more prioritized should the route be.
+for key, value in allPaths.items():
+    rs = value['time'] / sum_time * 10
+    rs_time[key] = round(rs)
+
+out_of_bounds = False
+for key, value in rs_time.items():
+    if out_of_bounds == True:
+        break
+    if value == 0.0:
+        for key, value in rs_time.items():
+            rs_time[key] += 1
+            out_of_bounds = True
+    if value > 9.0:
+        rs_time[key] = 9.0
+
+print('path relative strength against time: ')
+print(rs_time)
+print('\n')
+
 
 '''
+    calculat relative strength against height
+'''
+rs_height = {}
+
+for key, value in allPaths.items():
+    rs = value['height'] / sum_height * 10
+    rs_height[key] = round(rs)
+
+out_of_bounds = False
+for key, value in rs_height.items():
+    if out_of_bounds == True:
+        break
+    if value == 0.0:
+        for key, value in rs_height.items():
+            rs_height[key] += 1
+            out_of_bounds = True
+    if value > 9.0:
+        rs_height[key] = 9.0
+
+print('path relative strength against height: ')
+print(rs_height)
+print('\n')
+
+'''
+    calculat relative strength against distance
+    notice that the relative strength against distance is reversed, meaning
+    the shortest path has highest relative strength, as opposed to the case
+    in previous two.
+'''
+rs_distance = {}
+
+for key, value in allPaths.items():
+    rs = value['distance'] / sum_distance * 10
+    rs_distance[key] = round(rs)
+
+
+
+print('path relative strength against distance: ')
+print(rs_distance)
+print('\n')
