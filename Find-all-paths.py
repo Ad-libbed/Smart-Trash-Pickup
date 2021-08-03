@@ -1,3 +1,7 @@
+#!/usr/local/bin/python3
+from collections import defaultdict
+import ast
+
 '''
 Step 1: create a graph with every edge being recorded; output all possible routes;
 store them into allPaths, a dictionary
@@ -8,7 +12,7 @@ path_count = 0
 count = 0
 allPaths = {}
 
-from collections import defaultdict
+
 
 # This class represents a directed graph
 # using adjacency list representaion
@@ -27,9 +31,19 @@ class Graph:
         # defualt traffic between two vertices
         self.Traffic = defaultdict(list)
 
+    def calEdgeNumber(self, u, v):
+        return len(self.Edge[u,v])
+
     def getEdge(self):
         list = self.Edge
         return list
+
+    def getEdgesBT2nodes(self, u, v):
+        return self.Edge[u,v]
+
+    # remove the first element of the edge set after it's used
+    def setEdge(self, u, v):
+        self.Edge[u, v].pop(0)
 
         # function to add an edge to graph
     def addEdge(self, u, v, distance, traffic):
@@ -92,6 +106,7 @@ class Graph:
 # create a graph given in the above diagram
 # NOTE: traffic has three string values: "1"--red, "2"--Yello
 # "3"--green, denoting degree of traffic stagnancy
+
 g = Graph(5)
 g.addEdge(0, 1, 12, 1)
 g.addEdge(0, 1, 13, 2)
@@ -112,6 +127,8 @@ g.addEdge(1, 2, 21, 3)
 g.addEdge(1, 4, 12, 1)
 g.addEdge(2, 1, 12, 1)
 g.addEdge(2, 3, 12, 2)
+g.addEdge(2, 3, 14, 2)
+g.addEdge(2, 3, 3, 2)
 
 g.addEdge(2, 4, 12, 1)
 g.addEdge(2, 4, 20, 2)
@@ -135,30 +152,7 @@ for i in range(0,5):
             g.printAllPaths(i, j)
             print('There are paths in total of: ' + str(path_count))
             path_count = 0
-print('\nAfter deleting all the invalid paths, here are the final possible routes: ')
-
-for key, value in allPaths.items():
-    allPaths[key] = list(value.split(" "))
-for key, value in allPaths.items():
-    if len(value) != 5:
-        del allPaths[key]
-
-#remove paths with same order to only one so that every path now remaining
-#is unique and valid
-d2 = {tuple(v): k for k, v in allPaths.items()}  # exchange keys, values
-allPaths = {v: list(k) for k, v in d2.items()}
-print(allPaths)
 print('\n')
-
-newPaths = []
-#permutation of valid paths concerning traffic and distance -- Using trees
-
-
-
-
-
-
-
 # prints all edges between every two vertices
 for i in range(0,5):
     for j in range(0,5):
@@ -169,7 +163,101 @@ for i in range(0,5):
     print('\n')
 
 
-# filter all allPaths
+# for key, value in allPaths.items():
+#     print(type(allPaths[key])
+#
+# for key, value in allPaths.items():
+#     if len(value) != 5:
+#         del allPaths[key]
+
+# convert string representation of path list back to list type
+for key, value in allPaths.items():
+    allPaths[key] = ast.literal_eval(allPaths[key])
+
+paths = {}
+for key, value in allPaths.items():
+    if len(value) == 5:
+        paths[key] = value
+
+#remove paths with same order to only one so that every path now remaining
+#is unique and valid
+d2 = {tuple(v): k for k, v in paths.items()}  # exchange keys, values
+paths = {v: list(k) for k, v in d2.items()}
+print("valid prototype paths below: ")
+print(paths)
+
+print('\n')
+
+
+# permutation of valid paths concerning traffic and distance -- Using trees
+# path_permutation stores permutation number for each valid path
+path_permutation = {}
+def generateAllPaths(proto_paths):
+
+    # for each valid path, find permutation of it
+    # calculate number of permutation
+    global g
+    for key, value in proto_paths.items():
+        one_path = value
+        num = 1
+        for i in range(0, len(one_path) - 1):
+            global g
+            num = num * g.calEdgeNumber(one_path[i], one_path[i+1])
+
+        global path_permutation
+        path_permutation[key] = num
+
+
+
+generateAllPaths(paths)
+path_permutation = sorted(path_permutation.items())
+print('Below is permutation of the prototype of valid paths: ')
+print(path_permutation)
+
+'''
+Until now, paths stores prototype paths, and path_permutation stores permutation
+of each prototype path.
+Next step is to calculate every permutation's total distance and total traffic.
+By total traffic, we mean the sum of each node pair's traffic
+'''
+print("\n")
+
+
+final_paths = {}
+
+def
+
+
+# # for each set, we produce all paths
+for key, value in paths.items():
+    order_of_sites = value
+    process_list = []
+    for i in range(0, len(order_of_sites)-1):
+        list = []
+        list = g.getEdgesBT2nodes(value[i], value[i+1])
+        process_list.append(list)
+
+
+
+
+
+
+
+
+
+# def calTotalDistance(list):
+#     path = list
+#     global g
+#     sum = 0
+#     for i in range(len(path)-1):
+#         if
+#         # after one edge is used, delete it from the list in g object
+#         sum += g.getEdge(path[i], path[i+1])[0]
+#         g.setEdge(path[i], path[i+1])
+
+
+
+
 
 
 
